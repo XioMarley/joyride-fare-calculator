@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="fil">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0759c7">
+  <meta name="description" content="JoyRide Kita Calculator: fare, fuel consumption, gas expense and actual earnings.">
+  <title>JoyRide Kita Calculator</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon-192.png">
+  <style>
+    :root{--blue:#0759c7;--blue2:#0b79ed;--ink:#12233d;--muted:#687991;--bg:#eef4fb;--line:#dce6f2;--green:#087f5b}
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink)}
+    header{background:linear-gradient(135deg,#0646a6,#0b79ed);color:white;padding:25px 20px 30px;border-radius:0 0 26px 26px}
+    .wrap{max-width:620px;margin:auto;padding:0 15px 32px}
+    .brand{font-size:12px;letter-spacing:1.6px;font-weight:800;opacity:.85}.head{font-size:24px;font-weight:850;margin:6px 0}.sub{font-size:13px;opacity:.88}
+    main{margin-top:-14px}.panel{background:white;border:1px solid #e4ebf4;border-radius:18px;padding:18px;margin:14px 0;box-shadow:0 7px 22px #17365d0d}
+    label{display:block;font-size:13px;font-weight:750;margin:0 0 8px;color:#42536b}
+    input,select{width:100%;border:1px solid #cad8e8;border-radius:12px;padding:14px;font-size:18px;color:var(--ink);background:#fff;outline:none}
+    input:focus,select:focus{border-color:var(--blue2);box-shadow:0 0 0 3px #0b79ed1c}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{margin-bottom:13px}
+    .btn{border:0;border-radius:12px;padding:13px 16px;font-size:15px;font-weight:800;cursor:pointer}
+    .primary{background:var(--blue);color:white;width:100%}.secondary{background:#e8f1fc;color:#0759c7}.danger{background:#fff0f0;color:#b42318}
+    .result{background:linear-gradient(135deg,#0646a6,#0b79ed);color:white;border-radius:16px;padding:18px;margin-top:14px}
+    .result small{opacity:.85}.net{font-size:36px;font-weight:900;letter-spacing:-1px;margin:2px 0 10px}
+    .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat{background:#ffffff1a;border-radius:11px;padding:10px 8px}.stat b{display:block;font-size:17px}.stat span{font-size:11px;opacity:.85}
+    .muted{color:var(--muted);font-size:12px;line-height:1.45}.section-title{font-size:17px;font-weight:850;margin:0 0 12px}
+    .history-item{border-top:1px solid var(--line);padding:12px 0;display:flex;justify-content:space-between;gap:10px;align-items:center}
+    .history-item:first-of-type{border-top:0}.history-item b{display:block}.history-item small{color:var(--muted)}
+    .amount{font-weight:850;color:var(--green);white-space:nowrap}.actions{display:flex;gap:8px;flex-wrap:wrap}
+    .totals{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px}.total{background:#f1f6fc;border-radius:12px;padding:10px}.total b{display:block;font-size:16px}.total span{font-size:11px;color:var(--muted)}
+    .blue-highlight{grid-column:1/-1;background:linear-gradient(135deg,#0646a6,#0b79ed);color:#fff;padding:14px 16px;border-radius:14px;box-shadow:0 6px 18px #0759c724}.blue-highlight b{font-size:22px;line-height:1.2}.blue-highlight span{color:#eaf3ff;font-size:12px;font-weight:800;letter-spacing:.3px}
+    .profit-highlight{grid-column:1/-1;background:linear-gradient(135deg,#087f5b,#10a36f);color:#fff;padding:16px 18px;border-radius:14px;box-shadow:0 6px 18px #087f5b24}.profit-highlight b{font-size:30px;line-height:1.2}.profit-highlight span{color:#e5fff5;font-size:12px;font-weight:800;letter-spacing:.4px}
+    footer{text-align:center;padding:10px 12px 25px;color:var(--muted);font-size:11px}
+    @media(max-width:380px){.grid{grid-template-columns:1fr}.net{font-size:32px}}
+  </style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="head">JoyRide Kita Calculator</div>
+  <div class="sub">By XioMarley</div>
+</div></header>
+<div class="wrap"><main>
+  <section class="panel">
+    <div class="field">
+      <label for="km">DISTANCE (KM)</label>
+      <input id="km" type="number" min="0.1" step="0.1" inputmode="decimal" placeholder="Hal. 5.5">
+    </div>
+    <div class="field">
+      <label for="commission">PLATFORM COMMISSION (%)</label>
+      <select id="commission"><option value="20" selected>20%</option><option value="18">18%</option><option value="16">16%</option><option value="15">15%</option></select>
+    </div>
+    <h2 class="section-title">Gas settings (editable)</h2>
+    <div class="grid">
+      <div class="field"><label for="gasPrice">GAS PRICE (₱ / LITER)</label><input id="gasPrice" type="number" min="0" step="0.01" value="70" inputmode="decimal"></div>
+      <div class="field"><label for="fuelEfficiency">FUEL CONSUMPTION (KM / L) · ESTIMATED</label><input id="fuelEfficiency" type="number" min="0.1" step="0.1" value="45" inputmode="decimal"></div>
+    </div>
+    <p class="muted">Awtomatikong kukuwentahin ang gas expense gamit ang distance, gas price at fuel average na inilagay mo.</p>
+    <button class="btn primary" id="calc">CALCULATE FARE + GAS</button>
+    <div class="result" aria-live="polite">
+      <small>GROSS FARE (CASH TO COLLECT)</small>
+      <div class="net" id="gross">₱0.00</div>
+      <div class="stats">
+        <div class="stat"><b id="distance">—</b><span>Distance</span></div>
+        <div class="stat"><b id="rateLabel">20%</b><span>Commission rate</span></div>
+        <div class="stat"><b id="fee">₱0.00</b><span>Less: commission</span></div>
+        <div class="stat blue-highlight"><b id="net">₱0.00</b><span>FARE LESS COMMISSION</span></div>
+        <div class="stat"><b id="fuelCost">₱0.00</b><span>Less: gas expense</span></div>
+        <div class="stat"><b id="fuelLiters">0.00 L</b><span>Gas consumed</span></div>
+      </div>
+    </div>
+    <div class="totals" style="margin-top:12px">
+      <div class="total profit-highlight"><b id="profit">₱0.00</b><span>PINAKA-KITA · NET AFTER COMMISSION AT GAS</span></div>
+    </div>
+    <p class="muted" id="estimateNote">Estimate lamang ang gas consumption at expense batay sa fuel settings mo.</p>
+    <button class="btn secondary" id="save" style="width:100%" disabled>＋ SAVE THIS TRIP</button>
+  </section>
+
+  <section class="panel">
+    <h2 class="section-title">Earnings & gas history</h2>
+    <div class="totals">
+      <div class="total"><b id="totalGross">₱0</b><span>Total gross</span></div>
+      <div class="total"><b id="totalFee">₱0</b><span>Total fee</span></div>
+      <div class="total"><b id="totalNet">₱0</b><span>Net after fee</span></div>
+      <div class="total"><b id="totalFuel">₱0</b><span>Total gas cost</span></div>
+      <div class="total"><b id="totalLiters">0.00 L</b><span>Total gas consumed</span></div>
+      <div class="total"><b id="totalTrips">0</b><span>Total trips saved</span></div>
+      <div class="total"><b id="totalProfit">₱0</b><span>Total actual profit</span></div>
+    </div>
+    <div class="actions" style="margin:10px 0 4px">
+      <button class="btn secondary" id="export">EXPORT CSV</button>
+      <button class="btn danger" id="clear">CLEAR HISTORY</button>
+    </div>
+    <div id="history"><p class="muted">Wala pang naka-save na biyahe.</p></div>
+  </section>
+  <p class="muted" style="text-align:center">Offline-ready pagkatapos ma-install mula sa secure (HTTPS) website. Ang history ay naka-save lamang sa browser/device na ito.</p>
+</main></div>
+<footer>Independent estimate tool · Hindi opisyal na JoyRide app o fare table.</footer>
+<script>
+const samples=[[2.0,50],[3.0,59],[4.1,69],[7.1,96],[7.6,101],[8.0,104],[20.4,290],[25.8,371],[41.3,603]];
+const $=id=>document.getElementById(id);
+let current=null;
+const peso=n=>'₱'+Number(n||0).toLocaleString('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2});
+function interpolate(km){
+  let a,b;
+  if(km<=samples[0][0]){a=samples[0];b=samples[1]}
+  else if(km>=samples.at(-1)[0]){a=samples.at(-2);b=samples.at(-1)}
+  else {for(let i=0;i<samples.length-1;i++){if(km>=samples[i][0]&&km<=samples[i+1][0]){a=samples[i];b=samples[i+1];break}}}
+  return Math.max(0,a[1]+(km-a[0])*(b[1]-a[1])/(b[0]-a[0]));
+}
+function saveSettings(){
+  localStorage.setItem('joyrideKitaSettings',JSON.stringify({gasPrice:Number($('gasPrice').value),fuelEfficiency:Number($('fuelEfficiency').value)}));
+}
+function loadSettings(){
+  $('gasPrice').value=70;$('fuelEfficiency').value=45;
+  try{const s=JSON.parse(localStorage.getItem('joyrideKitaSettings')||'{}');if(s.gasPrice>0)$('gasPrice').value=s.gasPrice;if(s.fuelEfficiency>0)$('fuelEfficiency').value=s.fuelEfficiency}catch(e){}
+}
+function calculate(){
+  const km=parseFloat($('km').value), gasPrice=parseFloat($('gasPrice').value), efficiency=parseFloat($('fuelEfficiency').value);
+  if(!Number.isFinite(km)||km<=0){alert('Maglagay ng valid na distance sa KM.');return}
+  if(!Number.isFinite(gasPrice)||gasPrice<0){alert('Maglagay ng valid na presyo ng gasolina.');return}
+  if(!Number.isFinite(efficiency)||efficiency<=0){alert('Maglagay ng valid na fuel consumption sa KM/L.');return}
+  saveSettings();
+  const commissionPercent=Number($('commission').value);
+  if(!Number.isFinite(commissionPercent)||commissionPercent<0||commissionPercent>100){alert('Ang commission ay dapat 0 hanggang 100%.');return}
+  const gross=interpolate(km), rate=commissionPercent/100, fee=gross*rate, net=gross-fee;
+  const liters=km/efficiency, fuelCost=liters*gasPrice, profit=net-fuelCost;
+  current={km,gross,fee,net,rate:Number($('commission').value),gasPrice,efficiency,liters,fuelCost,profit,date:new Date().toISOString()};
+  $('gross').textContent=peso(gross);$('fee').textContent=peso(fee);$('net').textContent=peso(net);$('distance').textContent=km.toFixed(1)+' km';
+  $('rateLabel').textContent=commissionPercent.toFixed(commissionPercent%1?1:0)+'%';
+  $('fuelLiters').textContent=liters.toFixed(2)+' L';$('fuelCost').textContent=peso(fuelCost);$('profit').textContent=peso(profit);
+  $('estimateNote').textContent='Gas expense at consumed ay estimated base sa distance, gas price at fuel average.';
+  $('save').disabled=false;
+}
+function getTrips(){try{return JSON.parse(localStorage.getItem('joyrideKitaTrips')||localStorage.getItem('mcTaxiTrips')||'[]')}catch(e){return []}}
+function setTrips(t){localStorage.setItem('joyrideKitaTrips',JSON.stringify(t))}
+function render(){
+ const trips=getTrips(), host=$('history');
+ if(!trips.length)host.innerHTML='<p class="muted">Wala pang naka-save na biyahe.</p>';
+ else host.innerHTML=trips.slice().reverse().map(t=>`<div class="history-item"><div><b>${Number(t.km).toFixed(1)} km · ${peso(t.profit??t.net)}</b><small>${new Date(t.date).toLocaleString('en-PH')} · Gas ${peso(t.fuelCost||0)} · Consumed ${Number(t.liters||0).toFixed(2)} L · ${t.rate}% fee</small></div><div class="amount">${peso(t.gross)}</div></div>`).join('');
+ const sum=k=>trips.reduce((s,t)=>s+Number(t[k]||0),0);
+ $('totalGross').textContent=peso(sum('gross'));$('totalFee').textContent=peso(sum('fee'));$('totalNet').textContent=peso(sum('net'));
+ $('totalFuel').textContent=peso(sum('fuelCost'));$('totalLiters').textContent=sum('liters').toFixed(2)+' L';$('totalTrips').textContent=trips.length.toLocaleString('en-PH');$('totalProfit').textContent=peso(trips.reduce((s,t)=>s+Number(t.profit??t.net??0),0));
+}
+$('calc').addEventListener('click',calculate);
+$('km').addEventListener('keydown',e=>{if(e.key==='Enter')calculate()});
+$('commission').addEventListener('change',()=>{if(current)calculate()});
+['gasPrice','fuelEfficiency'].forEach(id=>$(id).addEventListener('change',()=>{saveSettings();if(current)calculate()}));
+$('save').addEventListener('click',()=>{if(!current)return;const trips=getTrips();trips.push(current);setTrips(trips);render();$('save').disabled=true;});
+$('clear').addEventListener('click',()=>{if(confirm('Sigurado ka bang burahin ang lahat ng saved trips?')){setTrips([]);render()}});
+$('export').addEventListener('click',()=>{const trips=getTrips();if(!trips.length){alert('Wala pang history na ie-export.');return}
+ const rows=[['Date','Distance km','Gross PHP','Commission PHP','Net after commission PHP','Gas price PHP/L','Fuel efficiency km/L','Gas consumed L','Gas expense PHP','Actual profit PHP','Commission %'],...trips.map(t=>[new Date(t.date).toISOString(),t.km,t.gross.toFixed(2),t.fee.toFixed(2),t.net.toFixed(2),t.gasPrice||'',t.efficiency||'',t.liters||'',t.fuelCost||'',t.profit??t.net,t.rate])];
+ const csv=rows.map(r=>r.join(',')).join('\\n');const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='joyride-kita-earnings.csv';a.click();URL.revokeObjectURL(a.href);
+});
+loadSettings();
+render();
+if('serviceWorker' in navigator && location.protocol.startsWith('http'))window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+</script>
+</body></html>
